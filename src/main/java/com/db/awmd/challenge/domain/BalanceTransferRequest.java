@@ -23,7 +23,7 @@ public class BalanceTransferRequest {
 	@NotEmpty
 	private String accountToId;
 	
-	@Min(value = 1, message = "Amount must be greater then 1.")
+	@Min(value = 0, message = "Amount must be positive number.")
 	private BigDecimal amount;
 	
 	 @JsonCreator

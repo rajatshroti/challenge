@@ -24,43 +24,44 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class AccountsController {
 
-  private final AccountsService accountsService;
+	private final AccountsService accountsService;
 
-  @Autowired
-  public AccountsController(AccountsService accountsService) {
-    this.accountsService = accountsService;
-  }
+	@Autowired
+	public AccountsController(AccountsService accountsService) {
+		this.accountsService = accountsService;
+	}
 
-  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Object> createAccount(@RequestBody @Valid Account account) {
-    log.info("Creating account {}", account);
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> createAccount(@RequestBody @Valid Account account) {
+		log.info("Creating account {}", account);
 
-    try {
-    this.accountsService.createAccount(account);
-    } catch (DuplicateAccountIdException daie) {
-      return new ResponseEntity<>(daie.getMessage(), HttpStatus.BAD_REQUEST);
-    }
+		try {
+			this.accountsService.createAccount(account);
+		} catch (DuplicateAccountIdException daie) {
+			return new ResponseEntity<>(daie.getMessage(), HttpStatus.BAD_REQUEST);
+		}
 
-    return new ResponseEntity<>(HttpStatus.CREATED);
-  }
+		return new ResponseEntity<>(HttpStatus.CREATED);
+	}
 
-  @GetMapping(path = "/{accountId}")
-  public Account getAccount(@PathVariable String accountId) {
-    log.info("Retrieving account for id {}", accountId);
-    return this.accountsService.getAccount(accountId);
-  }
-  @PostMapping(path = "/transferMoney",consumes = MediaType.APPLICATION_JSON_VALUE)
-  public  ResponseEntity<Object> transferMoney(@RequestBody @Valid BalanceTransferRequest balanceTransferRequest) {
-    log.info("Balance transfer request {}", balanceTransferRequest);
-    try {
-        this.accountsService.transferMoney(balanceTransferRequest);
-        } catch (InvalidAccountIdException iaie) {
-          return new ResponseEntity<>(iaie.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (InsufficientAmountException iae) {
-          return new ResponseEntity<>(iae.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+	@GetMapping(path = "/{accountId}")
+	public Account getAccount(@PathVariable String accountId) {
+		log.info("Retrieving account for id {}", accountId);
+		return this.accountsService.getAccount(accountId);
+	}
 
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
-  }
+	@PostMapping(path = "/transferMoney", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> transferMoney(@RequestBody @Valid BalanceTransferRequest balanceTransferRequest) {
+		log.info("Balance transfer request {}", balanceTransferRequest);
+		try {
+			this.accountsService.transferMoney(balanceTransferRequest);
+		} catch (InvalidAccountIdException iaie) {
+			return new ResponseEntity<>(iaie.getMessage(), HttpStatus.BAD_REQUEST);
+		} catch (InsufficientAmountException iae) {
+			return new ResponseEntity<>(iae.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+
+		return new ResponseEntity<>(HttpStatus.ACCEPTED);
+	}
 
 }
